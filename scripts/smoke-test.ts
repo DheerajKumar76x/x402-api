@@ -1,6 +1,5 @@
 import "dotenv/config";
-import { wrapFetchWithPayment } from "@x402/fetch";
-import { privateKeyToAccount } from "viem/accounts";
+import { createPaidFetch } from "../src/x402-paid-fetch";
 
 const baseUrl = process.env.SMOKE_BASE_URL || "http://localhost:8080";
 const privateKey = process.env.AGENT_WALLET_PRIVATE_KEY as `0x${string}` | undefined;
@@ -24,7 +23,7 @@ async function main(): Promise<void> {
     return;
   }
 
-  const paidFetch = wrapFetchWithPayment(fetch, privateKeyToAccount(privateKey));
+  const paidFetch = createPaidFetch(privateKey);
   for (const [service, path] of unpaid) {
     const response = await paidFetch(`${baseUrl}/${service}${path}`);
     console.log(`${service}: signed retry -> ${response.status} (expected 200 or 202)`);

@@ -17,6 +17,19 @@ Every public operation is paid. An unpaid request returns HTTP 402 with a `PAYME
 
 The complete marketplace-ready catalog is in [MARKETPLACE.md](MARKETPLACE.md). Copy-paste payloads and schemas for every business endpoint are in [MARKETPLACE_METADATA.md](MARKETPLACE_METADATA.md), and the machine-readable API contract is [openapi.json](openapi.json).
 
+## MCP server (stdio)
+
+Build and run the marketplace adapter with JSON-RPC on stdin/stdout. Internal logs go to stderr.
+
+```powershell
+npm install
+npm run build
+$env:AGENT_WALLET_PRIVATE_KEY="0x..."
+npm run mcp
+```
+
+Cursor/Claude config is in [mcp-config.json](mcp-config.json). Smithery config is [smithery.yaml](smithery.yaml). The CLI binary after build is `x402-mcp` (`dist/mcp-server.js`).
+
 ## Local development
 
 ```powershell

@@ -1,0 +1,34 @@
+# Smithery configuration: https://smithery.ai/docs/build/project-config/smithery-yaml
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - agentWalletPrivateKey
+    properties:
+      agentWalletPrivateKey:
+        type: string
+        description: Hex private key for the agent wallet that pays $0.01 USDC on Base per tool call.
+      apiBaseUrl:
+        type: string
+        default: https://x402-api-91r3.vercel.app
+        description: Base URL of the x402 API gateway.
+      network:
+        type: string
+        enum: [base, base-sepolia]
+        default: base
+        description: Target payment network.
+  commandFunction: |-
+    (config) => ({
+      command: 'node',
+      args: ['dist/mcp-server.js'],
+      env: {
+        AGENT_WALLET_PRIVATE_KEY: config.agentWalletPrivateKey,
+        API_BASE_URL: config.apiBaseUrl || 'https://x402-api-91r3.vercel.app',
+        NETWORK: config.network || 'base'
+      }
+    })
+  exampleConfig:
+    agentWalletPrivateKey: "0x0000000000000000000000000000000000000000000000000000000000000001"
+    apiBaseUrl: "https://x402-api-91r3.vercel.app"
+    network: base

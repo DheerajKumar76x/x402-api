@@ -2,11 +2,33 @@
   "name": "x402-api-portfolio",
   "version": "1.0.0",
   "private": true,
-  "main": "index.js",
+  "description": "x402 API portfolio plus a STDIO MCP server that pays USDC on Base for scraped-data tool calls.",
+  "keywords": [
+    "mcp",
+    "modelcontextprotocol",
+    "x402",
+    "stdio"
+  ],
+  "license": "ISC",
+  "main": "dist/mcp-server.js",
+  "bin": {
+    "x402-mcp": "dist/mcp-server.js"
+  },
+  "files": [
+    "dist/mcp-server.js",
+    "dist/x402-paid-fetch.js",
+    "mcp.json",
+    "mcp-config.json",
+    "smithery.yaml"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "ts-node-dev --respawn src/server.ts",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
+    "mcp": "node dist/mcp-server.js",
     "build:all": "npm run build --workspace @x402/x402-middleware && npm run build --workspace @x402/service-runtime && npm run build --workspaces --if-present",
     "dev:alpharoute": "npm run dev --workspace @x402/alpharoute",
     "dev:sentinelfeed": "npm run dev --workspace @x402/sentinelfeed",
@@ -19,10 +41,7 @@
     "services/*",
     "shared/*"
   ],
-  "keywords": [],
   "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "@coinbase/cdp-sdk": "^1.55.0",
     "@modelcontextprotocol/sdk": "^1.30.0",

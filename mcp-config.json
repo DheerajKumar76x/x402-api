@@ -5,7 +5,8 @@
       "args": ["dist/mcp-server.js"],
       "env": {
         "API_BASE_URL": "https://x402-api-91r3.vercel.app",
-        "AGENT_WALLET_PRIVATE_KEY": "set-locally-only"
+        "AGENT_WALLET_PRIVATE_KEY": "set-locally-only",
+        "NETWORK": "base"
       }
     }
   }

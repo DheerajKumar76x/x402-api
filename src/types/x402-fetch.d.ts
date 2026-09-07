@@ -1,8 +1,10 @@
 declare module "@x402/fetch" {
-  import type { Account } from "viem";
+  export class x402Client {
+    register(network: string, scheme: unknown, protocolVersion?: number): this;
+  }
 
   export function wrapFetchWithPayment(
     fetchFunction: typeof fetch,
-    account: Account
+    client: x402Client
   ): typeof fetch;
 }

@@ -192,4 +192,4 @@ Payment currency: USDC atomic units with 6 decimals
 
 OpenAPI: `https://x402-api-91r3.vercel.app/openapi.json`
 
-Note: the public deployment is an x402 REST gateway. The local [mcp-config.json](mcp-config.json) launches the separate stdio MCP adapter for the original scraped-data tool; it is not a remote Streamable HTTP MCP endpoint.
+Note: the public deployment is an x402 REST gateway. The local [mcp-config.json](mcp-config.json) and [mcp.json](mcp.json) launch the stdio MCP adapter; [smithery.yaml](smithery.yaml) is the Smithery start command. This is not a remote Streamable HTTP MCP endpoint.
