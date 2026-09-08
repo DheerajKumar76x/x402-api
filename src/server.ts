@@ -2,11 +2,42 @@ import express, { Request, Response, NextFunction } from "express";
 import { createPaymentMiddleware, flatPrice } from "@x402/x402-middleware";
 import { paymentOptions } from "@x402/service-runtime";
 import dotenv from "dotenv";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { randomUUID } from "crypto";
+import { z } from "zod";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+
+// MCP server and transport registry
+const mcpServer = new McpServer({ name: "x402-mcp", version: "1.0.0" });
+const transports: Record<string, StreamableHTTPServerTransport> = {};
+
+function attachMcp(app: express.Express) {
+
+
+  app.post("/api/mcp", async (req, res) => {
+    const sessionHeader = req.headers["mcp-session-id"] as string | undefined;
+    let transport = sessionHeader ? transports[sessionHeader] : undefined;
+
+    if (!transport) {
+      transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: () => randomUUID(),
+      });
+      await mcpServer.connect(transport);
+      const generatedId = (transport as any).sessionId;
+      if (generatedId) {
+        transports[generatedId] = transport;
+      }
+    }
+
+    await (transport as any).handleRequest(req, res, req.body);
+  });
+}
+
 
 const PORT = process.env.PORT || 4021;
 const WALLET_ADDRESS = process.env.WALLET_ADDRESS as `0x${string}`;
@@ -78,9 +109,14 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ success: false, error: "Internal server error" });
 });
 
+
+
+// Initialize MCP HTTP endpoint (must be before listen)
+attachMcp(app);
+
 app.listen(PORT, () => {
   console.log(`x402 API server running on port ${PORT}`);
   console.log(`Network: ${NETWORK} (MAINNET — real USDC)`);
   console.log(`Payments route to: ${WALLET_ADDRESS}`);
   console.log(`Protected route: GET /api/scraped-data — price $0.01 USDC`);
-});
+});

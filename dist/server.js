@@ -7,9 +7,32 @@ const express_1 = __importDefault(require("express"));
 const x402_middleware_1 = require("@x402/x402-middleware");
 const service_runtime_1 = require("@x402/service-runtime");
 const dotenv_1 = __importDefault(require("dotenv"));
+const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
+const streamableHttp_js_1 = require("@modelcontextprotocol/sdk/server/streamableHttp.js");
+const crypto_1 = require("crypto");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+// MCP server and transport registry
+const mcpServer = new mcp_js_1.McpServer({ name: "x402-mcp", version: "1.0.0" });
+const transports = {};
+function attachMcp(app) {
+    app.post("/api/mcp", async (req, res) => {
+        const sessionHeader = req.headers["mcp-session-id"];
+        let transport = sessionHeader ? transports[sessionHeader] : undefined;
+        if (!transport) {
+            transport = new streamableHttp_js_1.StreamableHTTPServerTransport({
+                sessionIdGenerator: () => (0, crypto_1.randomUUID)(),
+            });
+            await mcpServer.connect(transport);
+            const generatedId = transport.sessionId;
+            if (generatedId) {
+                transports[generatedId] = transport;
+            }
+        }
+        await transport.handleRequest(req, res, req.body);
+    });
+}
 const PORT = process.env.PORT || 4021;
 const WALLET_ADDRESS = process.env.WALLET_ADDRESS;
 const NETWORK = process.env.NETWORK || "base";
@@ -70,6 +93,8 @@ app.use((err, req, res, next) => {
     console.error("Unhandled error:", err.stack);
     res.status(500).json({ success: false, error: "Internal server error" });
 });
+// Initialize MCP HTTP endpoint (must be before listen)
+attachMcp(app);
 app.listen(PORT, () => {
     console.log(`x402 API server running on port ${PORT}`);
     console.log(`Network: ${NETWORK} (MAINNET — real USDC)`);
