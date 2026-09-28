@@ -22,7 +22,7 @@
     "smithery.yaml"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "scripts": {
     "dev": "ts-node-dev --respawn src/server.ts",
@@ -32,7 +32,7 @@
     "validate:spec": "node scripts/generate-spec.js --check",
     "auto-submit:registries": "node scripts/auto-submit-registries.js",
     "mcp": "node dist/mcp-server.js",
-    "build:all": "npm run build --workspace @x402/x402-middleware && npm run build --workspace @x402/service-runtime && npm run build --workspaces --if-present",
+    "build:all": "npm run build --workspace @x402/x402-middleware && npm run build --workspace @x402/service-runtime && npm run build --workspaces --if-present && npm run build",
     "dev:alpharoute": "npm run dev --workspace @x402/alpharoute",
     "dev:sentinelfeed": "npm run dev --workspace @x402/sentinelfeed",
     "dev:complyrail": "npm run dev --workspace @x402/complyrail",

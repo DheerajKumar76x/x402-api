@@ -9,6 +9,7 @@ import { x402 } from "./middleware/x402";
 const app = express();
 app.set("trust proxy", true);
 app.use(express.json());
+app.get("/", (_req, res) => res.status(200).json({ name: "x402 API Portfolio", openapi: "/docs/openapi.json", mcp: "/.well-known/mcp.json" }));
 app.get("/health", (_req, res) => res.status(200).json({ status: "ok", network: process.env.NETWORK || "base" }));
 app.use(x402({ path: "/api/scraped-data", pricing: flatPrice("$0.01"), description: "Returns fresh scraped JSON data for a given target URL" }));
 app.use("/api/scraped-data", scrapedData);

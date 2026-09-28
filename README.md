@@ -64,7 +64,7 @@ curl -i 'https://x402-api-91r3.vercel.app/api/scraped-data?target=https%3A%2F%2F
 
 ## Local development
 
-Requires Node.js 18 or newer. Copy `.env.example` to `.env` and set a valid treasury address and CDP facilitator credentials.
+Requires Node.js 22 or newer. Copy `.env.example` to `.env` and set a valid treasury address and CDP facilitator credentials.
 
 ```bash
 npm install

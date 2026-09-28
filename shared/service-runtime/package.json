@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": { "build": "tsc -p tsconfig.json" },
   "dependencies": {
+    "@coinbase/cdp-sdk": "^1.55.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "@x402/x402-middleware": "file:../x402-middleware",

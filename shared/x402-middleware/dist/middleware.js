@@ -13,10 +13,7 @@ const createPaymentMiddleware = (options, route) => {
         const key = `${method}:${route.path}:${price}`;
         let handler = handlers.get(key);
         if (!handler) {
-            const facilitator = new server_1.HTTPFacilitatorClient({
-                url: options.facilitatorUrl,
-                createAuthHeaders: options.createAuthHeaders
-            });
+            const facilitator = options.createFacilitator();
             const server = (0, server_2.registerExactEvmScheme)(new server_1.x402ResourceServer(facilitator).registerExtension(bazaar_1.bazaarResourceServerExtension), { networks: [route.network ?? options.network ?? "eip155:8453"] });
             const routes = {
                 [`${method} ${route.path}`]: {

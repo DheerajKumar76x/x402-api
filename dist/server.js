@@ -3,101 +3,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require("dotenv/config");
 const express_1 = __importDefault(require("express"));
+const scraped_data_1 = __importDefault(require("./routes/scraped-data"));
+const errors_1 = require("./middleware/errors");
+const payment_1 = require("./config/payment");
 const x402_middleware_1 = require("@x402/x402-middleware");
-const service_runtime_1 = require("@x402/service-runtime");
-const dotenv_1 = __importDefault(require("dotenv"));
-const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
-const streamableHttp_js_1 = require("@modelcontextprotocol/sdk/server/streamableHttp.js");
-const crypto_1 = require("crypto");
-dotenv_1.default.config();
+const x402_1 = require("./middleware/x402");
 const app = (0, express_1.default)();
+app.set("trust proxy", true);
 app.use(express_1.default.json());
-// MCP server and transport registry
-const mcpServer = new mcp_js_1.McpServer({ name: "x402-mcp", version: "1.0.0" });
-const transports = {};
-function attachMcp(app) {
-    app.post("/api/mcp", async (req, res) => {
-        const sessionHeader = req.headers["mcp-session-id"];
-        let transport = sessionHeader ? transports[sessionHeader] : undefined;
-        if (!transport) {
-            transport = new streamableHttp_js_1.StreamableHTTPServerTransport({
-                sessionIdGenerator: () => (0, crypto_1.randomUUID)(),
-            });
-            await mcpServer.connect(transport);
-            const generatedId = transport.sessionId;
-            if (generatedId) {
-                transports[generatedId] = transport;
-            }
-        }
-        await transport.handleRequest(req, res, req.body);
-    });
-}
-const PORT = process.env.PORT || 4021;
-const WALLET_ADDRESS = process.env.WALLET_ADDRESS;
-const NETWORK = process.env.NETWORK || "base";
-const CDP_API_KEY_ID = process.env.CDP_API_KEY_ID || "";
-const CDP_API_KEY_SECRET = process.env.CDP_API_KEY_SECRET || "";
-if (!WALLET_ADDRESS || !WALLET_ADDRESS.startsWith("0x") || WALLET_ADDRESS.length !== 42) {
-    console.error("FATAL: WALLET_ADDRESS is missing or malformed in .env");
-    process.exit(1);
-}
-if (!CDP_API_KEY_ID || !CDP_API_KEY_SECRET) {
-    console.error("FATAL: CDP_API_KEY_ID and CDP_API_KEY_SECRET are required for mainnet payments");
-    process.exit(1);
-}
-// Free, always-open health check — never gated by payment
-app.get("/health", (req, res) => {
-    res.json({ status: "ok", network: NETWORK, wallet: WALLET_ADDRESS });
-});
-app.use((0, x402_middleware_1.createPaymentMiddleware)((0, service_runtime_1.paymentOptions)(), {
-    path: "/api/scraped-data",
-    pricing: (0, x402_middleware_1.flatPrice)("$0.01"),
-    description: "Returns fresh scraped JSON data for a given target URL"
-}));
-// Mock scraper logic — swap this out for your real data/scraping code
-async function scrapeData(target) {
-    await new Promise((resolve) => setTimeout(resolve, 150));
-    return {
-        target,
-        scrapedAt: new Date().toISOString(),
-        title: `Sample title for ${target}`,
-        price: 129.99,
-        inStock: true,
-        metadata: {
-            source: "mock-scraper-v1",
-            confidence: 0.97,
-        },
-    };
-}
-// Protected route — the middleware above only lets traffic through after payment settles
-app.get("/api/scraped-data", async (req, res) => {
-    try {
-        const target = req.query.target || "https://example.com";
-        const data = await scrapeData(target);
-        console.log(`[${new Date().toISOString()}] Served PAID request for target=${target}`);
-        res.status(200).json({
-            success: true,
-            data,
-        });
-    }
-    catch (err) {
-        console.error("Scrape error:", err);
-        res.status(500).json({
-            success: false,
-            error: "Internal scraping error",
-        });
-    }
-});
-app.use((err, req, res, next) => {
-    console.error("Unhandled error:", err.stack);
-    res.status(500).json({ success: false, error: "Internal server error" });
-});
-// Initialize MCP HTTP endpoint (must be before listen)
-attachMcp(app);
-app.listen(PORT, () => {
-    console.log(`x402 API server running on port ${PORT}`);
-    console.log(`Network: ${NETWORK} (MAINNET — real USDC)`);
-    console.log(`Payments route to: ${WALLET_ADDRESS}`);
-    console.log(`Protected route: GET /api/scraped-data — price $0.01 USDC`);
+app.get("/", (_req, res) => res.status(200).json({ name: "x402 API Portfolio", openapi: "/docs/openapi.json", mcp: "/.well-known/mcp.json" }));
+app.get("/health", (_req, res) => res.status(200).json({ status: "ok", network: process.env.NETWORK || "base" }));
+app.use((0, x402_1.x402)({ path: "/api/scraped-data", pricing: (0, x402_middleware_1.flatPrice)("$0.01"), description: "Returns fresh scraped JSON data for a given target URL" }));
+app.use("/api/scraped-data", scraped_data_1.default);
+app.use(errors_1.notFound);
+app.use(errors_1.errorHandler);
+const port = Number(process.env.PORT || 4021);
+const payment = (0, payment_1.getPaymentConfig)();
+app.listen(port, "0.0.0.0", () => {
+    console.log(`x402 API listening on ${port} (${payment.network})`);
+    console.log(`Payment receiver: ${payment.payTo}`);
 });

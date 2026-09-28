@@ -1,6 +1,6 @@
 import type { RequestHandler } from "express";
 import { paymentMiddleware } from "@x402/express";
-import { HTTPFacilitatorClient, x402ResourceServer } from "@x402/core/server";
+import { x402ResourceServer } from "@x402/core/server";
 import { registerExactEvmScheme } from "@x402/evm/exact/server";
 import { bazaarResourceServerExtension } from "@x402/extensions/bazaar";
 import type { MiddlewareOptions, PaymentRouteOptions } from "./types";
@@ -18,10 +18,7 @@ export const createPaymentMiddleware = (
     let handler = handlers.get(key);
 
     if (!handler) {
-      const facilitator = new HTTPFacilitatorClient({
-        url: options.facilitatorUrl,
-        createAuthHeaders: options.createAuthHeaders
-      });
+      const facilitator = options.createFacilitator();
       const server = registerExactEvmScheme(
         new x402ResourceServer(facilitator).registerExtension(bazaarResourceServerExtension),
         { networks: [route.network ?? options.network ?? "eip155:8453"] }
