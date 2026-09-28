@@ -47,6 +47,7 @@
   "author": "",
   "dependencies": {
     "@coinbase/cdp-sdk": "^1.55.0",
+    "axios": "1.16.0",
     "@modelcontextprotocol/sdk": "^1.30.0",
     "@octokit/rest": "^22.0.1",
     "@x402/core": "^2.25.0",
