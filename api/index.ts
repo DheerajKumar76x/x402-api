@@ -1,124 +1,24 @@
-import express, { Request, Response, NextFunction } from "express";
-import { paymentMiddleware } from "@x402/express";
-import { HTTPFacilitatorClient, x402ResourceServer } from "@x402/core/server";
-import { registerExactEvmScheme } from "@x402/evm/exact/server";
-import { declareDiscoveryExtension, bazaarResourceServerExtension } from "@x402/extensions/bazaar";
-import type { Network } from "@x402/core/types";
-import dotenv from "dotenv";
+import express from "express";
 import portfolio from "./portfolio";
-import openapi from "../openapi.json";
-
-dotenv.config();
+import { errorHandler, notFound } from "../src/middleware/errors";
+import scrapedData from "../src/routes/scraped-data";
+import openapi from "../docs/openapi.json";
+import mcp from "../.well-known/mcp.json";
+import { flatPrice } from "@x402/x402-middleware";
+import { x402 } from "../src/middleware/x402";
 
 const app = express();
 app.set("trust proxy", true);
 app.use(express.json());
-app.get("/openapi.json", (_req: Request, res: Response) => res.json(openapi));
+app.get("/", (_req, res) => res.json({ name: "x402 API Portfolio", openapi: "/docs/openapi.json", mcp: "/.well-known/mcp.json" }));
+app.get("/health", (_req, res) => res.json({ status: "ok", network: process.env.NETWORK || "base" }));
+app.get("/openapi.json", (_req, res) => res.json(openapi));
+app.get("/docs/openapi.json", (_req, res) => res.json(openapi));
+app.get("/.well-known/mcp.json", (_req, res) => res.json(mcp));
+app.use(x402({ path: "/api/scraped-data", pricing: flatPrice("$0.01"), description: "Returns fresh scraped JSON data for a given target URL" }));
+app.use("/api/scraped-data", scrapedData);
 app.use(portfolio);
-
-const WALLET_ADDRESS = process.env.WALLET_ADDRESS as `0x${string}`;
-const NETWORK_NAME = process.env.NETWORK || "base";
-const NETWORK = (NETWORK_NAME === "base-sepolia" ? "eip155:84532" : "eip155:8453") as Network;
-const FACILITATOR_URL = (process.env.FACILITATOR_URL || "https://api.cdp.coinbase.com/platform/v2/x402/facilitator") as `${string}://${string}`;
-const CDP_API_KEY_ID = process.env.CDP_API_KEY_ID || "";
-const CDP_API_KEY_SECRET = process.env.CDP_API_KEY_SECRET || "";
-
-app.get("/health", (req: Request, res: Response) => {
-  res.json({ status: "ok", network: NETWORK_NAME, wallet: WALLET_ADDRESS });
-});
-
-const basicAuth = Buffer.from(`${CDP_API_KEY_ID}:${CDP_API_KEY_SECRET}`).toString("base64");
-const facilitator = new HTTPFacilitatorClient({
-  url: FACILITATOR_URL,
-  createAuthHeaders: async () => ({
-    verify: { Authorization: `Basic ${basicAuth}` },
-    settle: { Authorization: `Basic ${basicAuth}` },
-    supported: { Authorization: `Basic ${basicAuth}` },
-    bazaar: { Authorization: `Basic ${basicAuth}` }
-  })
-});
-const resourceServer = registerExactEvmScheme(
-  new x402ResourceServer(facilitator).registerExtension(bazaarResourceServerExtension),
-  { networks: [NETWORK] }
-);
-const scraperDiscovery = declareDiscoveryExtension({
-  method: "GET",
-  input: { queryParams: { target: "https://example.com" } },
-  inputSchema: { properties: { queryParams: { type: "object", properties: { target: { type: "string", format: "uri" } }, required: ["target"] } } },
-  output: { example: { success: true, data: { target: "https://example.com", title: "Example Domain", text: "...", textLength: 3, source: "real-scraper", success: true } } }
-});
-app.use(paymentMiddleware({
-  "GET /api/scraped-data": {
-    accepts: { scheme: "exact", price: "$0.01", network: NETWORK, payTo: WALLET_ADDRESS, maxTimeoutSeconds: 300 },
-    description: "Returns fresh scraped JSON data for a given target URL",
-    mimeType: "application/json",
-    extensions: scraperDiscovery
-  }
-}, resourceServer));
-
-async function scrapeData(target: string): Promise<Record<string, unknown>> {
-  try {
-    const response = await fetch(target, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    
-    const html = await response.text();
-    
-    // Extract clean text from HTML
-    const text = html
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "") // Remove scripts
-      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "") // Remove styles
-      .replace(/<[^>]+>/g, " ") // Remove HTML tags
-      .replace(/&nbsp;/g, " ")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&amp;/g, "&")
-      .replace(/\s+/g, " ") // Collapse whitespace
-      .trim();
-    
-    // Extract title from HTML if available
-    const titleMatch = html.match(/<title\b[^<]*>([^<]*)<\/title>/i);
-    const title = titleMatch ? titleMatch[1].trim() : "No title found";
-    
-    return {
-      target,
-      scrapedAt: new Date().toISOString(),
-      title,
-      text: text.substring(0, 1000), // First 1000 chars of clean text
-      textLength: text.length,
-      source: "real-scraper",
-      success: true
-    };
-  } catch (err) {
-    throw new Error(`Failed to scrape ${target}: ${(err as Error).message}`);
-  }
-}
-
-app.get("/api/scraped-data", async (req: Request, res: Response) => {
-  try {
-    const target = (req.query.target as string) || "https://example.com";
-    const data = await scrapeData(target);
-    console.log(`[${new Date().toISOString()}] Served PAID request for target=${target}`);
-    res.status(200).json({ success: true, data });
-  } catch (err) {
-    console.error("Scrape error:", err);
-    res.status(500).json({ success: false, error: "Internal scraping error" });
-  }
-});
-
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error("Unhandled error:", err.message, err.stack);
-  res.status(500).json({ success: false, error: "Internal server error", details: err.message });
-});
-
-app.use((req: Request, res: Response) => {
-  res.status(404).json({ error: "Not found" });
-});
+app.use(notFound);
+app.use(errorHandler);
 
 export default app;

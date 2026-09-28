@@ -28,6 +28,8 @@
     "dev": "ts-node-dev --respawn src/server.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
+    "generate:spec": "node scripts/generate-spec.js",
+    "validate:spec": "node scripts/generate-spec.js --check",
     "mcp": "node dist/mcp-server.js",
     "build:all": "npm run build --workspace @x402/x402-middleware && npm run build --workspace @x402/service-runtime && npm run build --workspaces --if-present",
     "dev:alpharoute": "npm run dev --workspace @x402/alpharoute",

@@ -1,0 +1,25 @@
+name: Publish API registry
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*", "V*"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-publish:
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY_WEBHOOK: ${{ secrets.X402_REGISTRY_WEBHOOK }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate API specifications
+        run: node scripts/generate-spec.js && node scripts/generate-spec.js --check
+      - name: Publish OpenAPI catalog to configured registry
+        if: ${{ env.REGISTRY_WEBHOOK != '' }}
+        run: curl --fail-with-body --silent --show-error -X POST "$REGISTRY_WEBHOOK" -H 'Content-Type: application/json' --data-binary @docs/openapi.json

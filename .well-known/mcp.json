@@ -1,0 +1,26 @@
+{
+  "name": "x402-scraped-data",
+  "version": "1.0.0",
+  "description": "STDIO MCP adapter for the x402 scraped-data API. Pays $0.01 USDC on Base per tool call from AGENT_WALLET_PRIVATE_KEY.",
+  "transport": "stdio",
+  "tools": [
+    {
+      "name": "get_scraped_data",
+      "description": "Fetches scraped JSON data for a target URL. Costs $0.01 USDC on Base per call.",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "target"
+        ],
+        "properties": {
+          "target": {
+            "type": "string",
+            "format": "uri",
+            "description": "The absolute URL to fetch scraped data for"
+          }
+        }
+      }
+    }
+  ]
+}
