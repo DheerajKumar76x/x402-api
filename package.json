@@ -30,6 +30,7 @@
     "start": "node dist/server.js",
     "generate:spec": "node scripts/generate-spec.js",
     "validate:spec": "node scripts/generate-spec.js --check",
+    "auto-submit:registries": "node scripts/auto-submit-registries.js",
     "mcp": "node dist/mcp-server.js",
     "build:all": "npm run build --workspace @x402/x402-middleware && npm run build --workspace @x402/service-runtime && npm run build --workspaces --if-present",
     "dev:alpharoute": "npm run dev --workspace @x402/alpharoute",
@@ -47,6 +48,7 @@
   "dependencies": {
     "@coinbase/cdp-sdk": "^1.55.0",
     "@modelcontextprotocol/sdk": "^1.30.0",
+    "@octokit/rest": "^22.0.1",
     "@x402/core": "^2.25.0",
     "@x402/evm": "^2.25.0",
     "@x402/express": "^2.25.0",

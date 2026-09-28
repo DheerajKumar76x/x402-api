@@ -77,3 +77,5 @@ Run the scraper server with `npm run dev`. The MCP stdio adapter is built and ru
 ## Registry publishing
 
 The GitHub Action validates the OpenAPI and MCP catalogs on main pushes and published releases. To send the OpenAPI document to a registry, configure the repository secret `X402_REGISTRY_WEBHOOK` with that registry's HTTPS POST endpoint. The workflow sends `docs/openapi.json` as `application/json`.
+
+The weekly **Auto Submit to Registries & Awesome Lists** workflow searches GitHub for public resource lists, skips repositories that disallow forks or were already submitted, and opens up to three documentation pull requests per run. Configure the repository secret `GH_AUTOMATION_TOKEN` with a token that can fork public repositories, open pull requests, and update this repository's submission tracker. Run it manually from the Actions tab when needed. Each accepted pull request URL is recorded in `.github/submitted-registries.json`.
