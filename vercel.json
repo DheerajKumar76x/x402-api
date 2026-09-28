@@ -1,5 +1,10 @@
 {
   "buildCommand": "npm run build:all",
+  "functions": {
+    "api/index.ts": {
+      "includeFiles": "node_modules/@coinbase/cdp-sdk/**"
+    }
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/api" }
   ]
