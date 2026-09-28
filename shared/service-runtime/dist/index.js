@@ -4,7 +4,7 @@ exports.start = exports.paymentOptions = void 0;
 exports.createCdpAuthFacilitator = createCdpAuthFacilitator;
 require("dotenv/config");
 const server_1 = require("@x402/core/server");
-const auth_1 = require("@coinbase/cdp-sdk/auth");
+const loadCdpAuth = new Function("specifier", "return import(specifier)");
 function createCdpAuthFacilitator() {
     const configuredUrl = process.env.FACILITATOR_URL || "https://api.cdp.coinbase.com/platform/v2/x402";
     const baseUrl = configuredUrl.replace(/\/facilitator\/?$/, "");
@@ -12,13 +12,16 @@ function createCdpAuthFacilitator() {
     const basePath = endpoint.pathname.replace(/\/$/, "");
     const apiKeyId = process.env.CDP_API_KEY_ID || "";
     const apiKeySecret = process.env.CDP_API_KEY_SECRET || "";
-    const headersFor = (path, method) => (0, auth_1.getAuthHeaders)({
-        apiKeyId,
-        apiKeySecret,
-        requestMethod: method,
-        requestHost: endpoint.host,
-        requestPath: `${basePath}/${path}`
-    });
+    const headersFor = async (path, method) => {
+        const { getAuthHeaders } = await loadCdpAuth("@coinbase/cdp-sdk/auth");
+        return getAuthHeaders({
+            apiKeyId,
+            apiKeySecret,
+            requestMethod: method,
+            requestHost: endpoint.host,
+            requestPath: `${basePath}/${path}`
+        });
+    };
     return new server_1.HTTPFacilitatorClient({
         url: baseUrl,
         createAuthHeaders: async () => {

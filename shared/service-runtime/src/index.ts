@@ -3,7 +3,9 @@ import type { Express } from "express";
 import type { MiddlewareOptions } from "@x402/x402-middleware";
 import type { Network } from "@x402/core/types";
 import { HTTPFacilitatorClient } from "@x402/core/server";
-import { getAuthHeaders } from "@coinbase/cdp-sdk/auth";
+
+type CdpAuthModule = typeof import("@coinbase/cdp-sdk/auth");
+const loadCdpAuth = new Function("specifier", "return import(specifier)") as (specifier: string) => Promise<CdpAuthModule>;
 
 export function createCdpAuthFacilitator(): HTTPFacilitatorClient {
   const configuredUrl = process.env.FACILITATOR_URL || "https://api.cdp.coinbase.com/platform/v2/x402";
@@ -13,13 +15,16 @@ export function createCdpAuthFacilitator(): HTTPFacilitatorClient {
   const apiKeyId = process.env.CDP_API_KEY_ID || "";
   const apiKeySecret = process.env.CDP_API_KEY_SECRET || "";
 
-  const headersFor = (path: string, method: string) => getAuthHeaders({
+  const headersFor = async (path: string, method: string) => {
+    const { getAuthHeaders } = await loadCdpAuth("@coinbase/cdp-sdk/auth");
+    return getAuthHeaders({
     apiKeyId,
     apiKeySecret,
     requestMethod: method,
     requestHost: endpoint.host,
     requestPath: `${basePath}/${path}`
   });
+  };
 
   return new HTTPFacilitatorClient({
     url: baseUrl as `${string}://${string}`,
