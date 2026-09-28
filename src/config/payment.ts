@@ -1,6 +1,7 @@
 import "dotenv/config";
-import type { Network } from "@x402/core/types";
 import type { MiddlewareOptions } from "@x402/x402-middleware";
+
+type Network = "eip155:8453" | "eip155:84532";
 
 export function getPaymentConfig(): MiddlewareOptions {
   const payTo = process.env.PAY_TO || process.env.WALLET_ADDRESS;
