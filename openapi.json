@@ -28,7 +28,7 @@
   },
   "servers": [
     {
-      "url": "https://vercel.app",
+      "url": "https://x402-api-91r3.vercel.app",
       "description": "Production"
     }
   ],
