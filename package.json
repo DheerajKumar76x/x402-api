@@ -39,7 +39,8 @@
     "dev:distillforge": "npm run dev --workspace @x402/distillforge",
     "dev:proofmesh": "npm run dev --workspace @x402/proofmesh",
     "smoke": "tsx scripts/smoke-test.ts",
-   "publish-smithery": "smithery mcp publish . -n @dheeraj1018279/x402-api --config-schema \"{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"AGENT_WALLET_PRIVATE_KEY\\\":{\\\"type\\\":\\\"string\\\",\\\"description\\\":\\\"Your Base Mainnet private key to auto-pay $0.01 USDC per call\\\"}},\\\"required\\\":[\\\"AGENT_WALLET_PRIVATE_KEY\\\"]}\""
+       "publish-smithery": "smithery mcp publish ./server.mcpb -n @dheeraj1018279/x402-api --config-schema \"{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"AGENT_WALLET_PRIVATE_KEY\\\":{\\\"type\\\":\\\"string\\\",\\\"description\\\":\\\"Your Base Mainnet private key to auto-pay $0.01 USDC per call\\\"}},\\\"required\\\":[\\\"AGENT_WALLET_PRIVATE_KEY\\\"]}\""
+
      
 
   },
