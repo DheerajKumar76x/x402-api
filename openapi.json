@@ -18,11 +18,15 @@
       "asset": "USDC",
       "payTo": "0x99F3A41619Ae88B4Fd9f8f2797A1Aea152C0d271"
     }
+
+    
   },
+
   "security": [
     {
       "x402Payment": []
     }
+
   ],
   "paths": {
     "/alpharoute/api/v1/quote": {
@@ -399,7 +403,16 @@
 "ClassifyRequest": {"type": "object", "required": ["text", "taxonomy"], "properties": {"text": {"type": "string"}, "taxonomy": {"type": "string", "example": "onchain_events_v3"}, "maxTokens": {"type": "integer"}}},
 "ExtractRequest": {"type": "object", "required": ["document", "schema"], "properties": {"document": {"type": "string"}, "schema": {"type": "object"}, "maxTokensCeiling": {"type": "integer", "default": 2000}}},
 "Inference": {"type": "object", "properties": {"model": {"type": "string"}, "result": {"type": "object", "additionalProperties": true}, "tokensUsed": {"type": "integer"}, "billedAmountUsdc": {"type": "string"}}},
-"ExtractResult": {"allOf": [{"$ref": "#/components/schemas/Inference"}, {"type": "object", "properties": {"refundTxHash": {"type": "string", "nullable": true}}}]},
+"ExtractResult": {
+  "type": "object",
+  "properties": {
+    "model": {"type": "string"},
+    "result": {"type": "object", "additionalProperties": true},
+    "tokensUsed": {"type": "integer"},
+    "billedAmountUsdc": {"type": "string"},
+    "refundTxHash": {"type": "string", "nullable": true}
+  }
+},
 "ZkProofRequest": {"type": "object", "required": ["modelHash", "inputHash", "outputHash", "proofSystem"], "properties": {"modelHash": {"type": "string"}, "inputHash": {"type": "string"}, "outputHash": {"type": "string"}, "proofSystem": {"type": "string", "enum": ["ezkl", "risczero"]}}},
 "TeeAttestRequest": {"type": "object", "required": ["enclaveId", "computationDigest"], "properties": {"enclaveId": {"type": "string"}, "computationDigest": {"type": "string"}}},
 "ProofStatus": {"type": "object", "required": ["proofId", "status", "proofSystem", "progressPercent", "resultFingerprint"], "properties": {"proofId": {"type": "string"}, "status": {"type": "string", "enum": ["queued", "proving", "complete", "failed"]}, "proof": {"type": "string", "nullable": true}, "proofSystem": {"type": "string", "enum": ["ezkl", "risczero"]}, "progressPercent": {"type": "integer", "minimum": 0, "maximum": 100}, "resultFingerprint": {"type": "string"}}},
