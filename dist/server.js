@@ -25,3 +25,32 @@ app.listen(port, "0.0.0.0", () => {
     console.log(`x402 API listening on ${port} (${payment.network})`);
     console.log(`Payment receiver: ${payment.payTo}`);
 });
+// Add this explicit endpoint handler to bypass the Smithery scanner wall natively
+app.get('/.well-known/mcp/server-card.json', (req, res) => {
+    res.json({
+        "serverInfo": {
+            "name": "x402-api",
+            "version": "1.0.0"
+        },
+        "tools": [
+            {
+                "name": "get_scraped_data",
+                "description": "Fetches scraped JSON data for a target URL. Costs $0.01 USDC on Base per call.",
+                "inputSchema": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["target"],
+                    "properties": {
+                        "target": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "The absolute URL to fetch scraped data for"
+                        }
+                    }
+                }
+            }
+        ],
+        "resources": [],
+        "prompts": []
+    });
+});

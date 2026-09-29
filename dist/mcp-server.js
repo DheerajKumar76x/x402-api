@@ -7,8 +7,6 @@ const stdio_js_1 = require("@modelcontextprotocol/sdk/server/stdio.js");
 const zod_1 = require("zod");
 const x402_paid_fetch_1 = require("./x402-paid-fetch");
 const API_BASE_URL = process.env.API_BASE_URL || "https://x402-api-91r3.vercel.app";
-NETWORK=base
-AGENT_WALLET_PRIVATE_KEY=0x99F3A41619Ae88B4Fd9f8f2797A1Aea152C0d271
 let paidFetch;
 function getPaidFetch() {
     if (!paidFetch) {
