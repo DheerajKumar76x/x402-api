@@ -1,0 +1,9 @@
+{
+  "name": "x402-api",
+  "version": "1.0.0",
+  "main": "dist/mcp-server.js",
+  "files": [
+    "dist/mcp-server.js",
+    "package.json"
+  ]
+}
