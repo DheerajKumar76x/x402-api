@@ -1,21 +1,20 @@
-
 {
   "openapi": "3.0.3",
   "info": {
     "title": "x402 API Portfolio",
     "version": "1.0.0",
-    "description": "Five machine-native REST services protected by x402 payments on Base USDC. Every operation below is paid and returns HTTP 402 with x402 payment requirements before a successful paid retry."
+    "description": "Five machine-native REST services protected by x402 payments on Ethereum USDC. Every operation below is paid and returns HTTP 402 with x402 payment requirements before a successful paid retry."
   },
   "servers": [
     {
-      "url": "https://x402-api-91r3.vercel.app",
+      "url": "https://vercel.app",
       "description": "Production"
     }
   ],
   "x-x402": {
     "version": "1.0.0",
     "payment": {
-      "network": "base",
+      "network": "ethereum",
       "asset": "USDC",
       "payTo": "0xd80B3326B2B906CAAcCA6E50C495bD8a7a9C1F0a"
     }
@@ -36,7 +35,7 @@
           {"name": "tokenOut", "in": "query", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
           {"name": "amountIn", "in": "query", "required": true, "schema": {"type": "string", "description": "Amount in token base units"}},
           {"name": "maxSlippageBps", "in": "query", "required": false, "schema": {"type": "integer", "default": 50, "minimum": 0}},
-          {"name": "chainId", "in": "query", "required": true, "schema": {"type": "integer", "enum": [8453]}}
+          {"name": "chainId", "in": "query", "required": true, "schema": {"type": "integer", "enum": [1]}}
         ],
         "responses": {
           "200": {"$ref": "#/components/responses/AlphaQuote"},
@@ -314,7 +313,7 @@
 "RouteId": {"name": "routeId", "in": "path", "required": true, "schema": {"type": "string"}},
 "EntityId": {"name": "entityId", "in": "path", "required": true, "schema": {"type": "string"}},
 "Address": {"name": "address", "in": "path", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
-"ChainId": {"name": "chainId", "in": "query", "required": false, "schema": {"type": "integer", "default": 8453, "enum": [8453]}},
+"ChainId": {"name": "chainId", "in": "query", "required": false, "schema": {"type": "integer", "default": 1, "enum": [1]}},
 "ProofId": {"name": "proofId", "in": "path", "required": true, "schema": {"type": "string"}}
 },
 "responses": {
@@ -392,8 +391,8 @@
 "schemas": {
 "EvmAddress": {"type": "string", "pattern": "^0x[a-fA-F0-9]{40}$", "example": "0x0000000000000000000000000000000000000001"},
 "PaymentChallenge": {"type": "object", "required": ["x402Version", "accepts"], "properties": {"x402Version": {"type": "integer", "example": 1}, "accepts": {"type": "array", "items": {"$ref": "#/components/schemas/PaymentRequirement"}}}},
-"PaymentRequirement": {"type": "object", "required": ["scheme", "network", "asset", "payTo", "maxAmountRequired", "resource"], "properties": {"scheme": {"type": "string", "example": "exact"}, "network": {"type": "string", "example": "base"}, "asset": {"type": "string", "example": "USDC"}, "payTo": {"$ref": "#/components/schemas/EvmAddress"}, "maxAmountRequired": {"type": "string", "description": "USDC atomic units with 6 decimals"}, "resource": {"type": "string"}, "description": {"type": "string"}}},
-"AlphaQuote": {"type": "object", "required": ["routeId", "chainId", "tokenIn", "tokenOut", "amountIn", "expectedOut", "priceImpactBps", "maxSlippageBps", "selectedVenues", "routeType", "calldata", "quoteFingerprint", "expiresAt"], "properties": {"routeId": {"type": "string"}, "chainId": {"type": "integer", "example": 8453}, "tokenIn": {"$ref": "#/components/schemas/EvmAddress"}, "tokenOut": {"$ref": "#/components/schemas/EvmAddress"}, "amountIn": {"type": "string"}, "expectedOut": {"type": "string"}, "priceImpactBps": {"type": "integer"}, "maxSlippageBps": {"type": "integer"}, "selectedVenues": {"type": "array", "items": {"type": "string"}}, "routeType": {"type": "string", "enum": ["single-hop", "multi-hop-split"]}, "calldata": {"type": "string"}, "quoteFingerprint": {"type": "string"}, "expiresAt": {"type": "string", "format": "date-time"}}},
+"PaymentRequirement": {"type": "object", "required": ["scheme", "network", "asset", "payTo", "maxAmountRequired", "resource"], "properties": {"scheme": {"type": "string", "example": "exact"}, "network": {"type": "string", "example": "ethereum"}, "asset": {"type": "string", "example": "USDC"}, "payTo": {"$ref": "#/components/schemas/EvmAddress"}, "maxAmountRequired": {"type": "string", "description": "USDC atomic units with 6 decimals"}, "resource": {"type": "string"}, "description": {"type": "string"}}},
+"AlphaQuote": {"type": "object", "required": ["routeId", "chainId", "tokenIn", "tokenOut", "amountIn", "expectedOut", "priceImpactBps", "maxSlippageBps", "selectedVenues", "routeType", "calldata", "quoteFingerprint", "expiresAt"], "properties": {"routeId": {"type": "string"}, "chainId": {"type": "integer", "example": 1}, "tokenIn": {"$ref": "#/components/schemas/EvmAddress"}, "tokenOut": {"$ref": "#/components/schemas/EvmAddress"}, "amountIn": {"type": "string"}, "expectedOut": {"type": "string"}, "priceImpactBps": {"type": "integer"}, "maxSlippageBps": {"type": "integer"}, "selectedVenues": {"type": "array", "items": {"type": "string"}}, "routeType": {"type": "string", "enum": ["single-hop", "multi-hop-split"]}, "calldata": {"type": "string"}, "quoteFingerprint": {"type": "string"}, "expiresAt": {"type": "string", "format": "date-time"}}},
 "ExecuteRequest": {"type": "object", "required": ["routeId", "signedPermit", "maxSlippageBps"], "properties": {"routeId": {"type": "string"}, "signedPermit": {"type": "string"}, "maxSlippageBps": {"type": "integer"}, "notionalUsd": {"type": "number"}}},
 "TransactionScreen": {"type": "object", "required": ["from", "to", "amount", "asset", "riskScore", "sanctioned", "decision", "attestation"], "properties": {"from": {"$ref": "#/components/schemas/EvmAddress"}, "to": {"$ref": "#/components/schemas/EvmAddress"}, "amount": {"type": "string"}, "asset": {"type": "string"}, "riskScore": {"type": "number", "minimum": 0, "maximum": 1}, "sanctioned": {"type": "boolean"}, "decision": {"type": "string", "enum": ["allow", "review", "block"]}, "attestation": {"type": "object", "additionalProperties": true}, "settlementTxHash": {"type": "string", "nullable": true}}},
 "BatchAttestRequest": {"type": "object", "required": ["addresses"], "properties": {"addresses": {"type": "array", "items": {"$ref": "#/components/schemas/EvmAddress"}}}},
