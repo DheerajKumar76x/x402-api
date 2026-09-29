@@ -5,5 +5,15 @@
   "files": [
     "dist/mcp-server.js",
     "package.json"
-  ]
+  ],
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "AGENT_WALLET_PRIVATE_KEY": {
+        "type": "string",
+        "description": "Your Base Mainnet private key to auto-pay $0.01 USDC per call"
+      }
+    },
+    "required": ["AGENT_WALLET_PRIVATE_KEY"]
+  }
 }
