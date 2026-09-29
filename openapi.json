@@ -1,24 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {
   "openapi": "3.0.3",
   "info": {
@@ -28,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://vercel.app",
+      "url": "https://x402-api-91r3.vercel.app",
       "description": "Production"
     }
   ],
@@ -283,7 +262,6 @@
         "requestBody": {
           "required": true,
           "content": {
-
 "application/json": {
 "schema": {"$ref": "#/components/schemas/TeeAttestRequest"}
 }
@@ -439,7 +417,7 @@
 "ExtractResult": {"allOf": [{"$ref": "#/components/schemas/Inference"}, {"type": "object", "properties": {"refundTxHash": {"type": "string", "nullable": true}}}]},
 "ZkProofRequest": {"type": "object", "required": ["modelHash", "inputHash", "outputHash", "proofSystem"], "properties": {"modelHash": {"type": "string"}, "inputHash": {"type": "string"}, "outputHash": {"type": "string"}, "proofSystem": {"type": "string", "enum": ["ezkl", "risczero"]}}},
 "TeeAttestRequest": {"type": "object", "required": ["enclaveId", "computationDigest"], "properties": {"enclaveId": {"type": "string"}, "computationDigest": {"type": "string"}}},
-"ProofStatus": {"type": "object", "required": ["proofId", "status", "proofSystem", "progressPercent", "resultFingerprint"], "properties": {"proofId": {"type": "string"}, "status": {"type": "string", "enum": ["queued", "proving", "complete", "failed"]}, "proof": {"type": "string", "nullable": true}, "proofSystem": {"type": "string", "enum": ["ezkl", "risczero"]}, "progressPercent": {"type": "integer", "minimum": 0, "maximum": 100}, "resultFingerprint": {"type": "string"}},
+"ProofStatus": {"type": "object", "required": ["proofId", "status", "proofSystem", "progressPercent", "resultFingerprint"], "properties": {"proofId": {"type": "string"}, "status": {"type": "string", "enum": ["queued", "proving", "complete", "failed"]}, "proof": {"type": "string", "nullable": true}, "proofSystem": {"type": "string", "enum": ["ezkl", "risczero"]}, "progressPercent": {"type": "integer", "minimum": 0, "maximum": 100}, "resultFingerprint": {"type": "string"}}},
 "ScrapeResult": {"type": "object", "properties": {"success": {"type": "boolean"}, "data": {"type": "object", "additionalProperties": true}}}
 }
 }
