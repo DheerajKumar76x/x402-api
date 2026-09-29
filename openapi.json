@@ -388,6 +388,8 @@
 "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ScrapeResult"}}}
 }
 },
+
+
 "schemas": {
 "EvmAddress": {"type": "string", "pattern": "^0x[a-fA-F0-9]{40}$", "example": "0x0000000000000000000000000000000000000001"},
 "PaymentChallenge": {"type": "object", "required": ["x402Version", "accepts"], "properties": {"x402Version": {"type": "integer", "example": 1}, "accepts": {"type": "array", "items": {"$ref": "#/components/schemas/PaymentRequirement"}}}},
