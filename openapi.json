@@ -1,3 +1,18 @@
+
+  "servers": [{"url": "https://x402-api-91r3.vercel.app", "description": "Production"}],
+  "x-x402": {
+    "version": "1.0.0",
+    "payment": {
+      "network": "base",
+      "asset": "USDC",
+      "payTo": "0xd80B3326B2B906CAAcCA6E50C495bD8a7a9C1F0a"
+    }
+  },
+  "security": [{"x402Payment": []}],
+
+
+
+
 {
   "openapi": "3.0.3",
   "info": {
