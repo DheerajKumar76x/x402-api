@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://vercel.app",
+      "url": "https://x402-api-91r3.vercel.app",
       "description": "Production"
     }
   ],
@@ -16,7 +16,7 @@
     "payment": {
       "network": "ethereum",
       "asset": "USDC",
-      "payTo": "0xd80B3326B2B906CAAcCA6E50C495bD8a7a9C1F0a"
+      "payTo": "0x99F3A41619Ae88B4Fd9f8f2797A1Aea152C0d271"
     }
   },
   "security": [
