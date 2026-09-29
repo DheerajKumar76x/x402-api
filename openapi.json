@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://vercel.app",
+      "url": "https://x402-api-91r3.vercel.app/",
       "description": "Production"
     }
   ],
@@ -35,7 +35,7 @@
           {"name": "tokenOut", "in": "query", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
           {"name": "amountIn", "in": "query", "required": true, "schema": {"type": "string", "description": "Amount in token base units"}},
           {"name": "maxSlippageBps", "in": "query", "required": false, "schema": {"type": "integer", "default": 50, "minimum": 0}},
-          {"name": "chainId", "in": "query", "required": true, "schema": {"type": "integer", "enum": [1]}}
+          {"name": "chainId", "in": "query", "required": true, "schema": {"type": "integer", "default": 1}}
         ],
         "responses": {
           "200": {"$ref": "#/components/responses/AlphaQuote"},
@@ -313,7 +313,7 @@
 "RouteId": {"name": "routeId", "in": "path", "required": true, "schema": {"type": "string"}},
 "EntityId": {"name": "entityId", "in": "path", "required": true, "schema": {"type": "string"}},
 "Address": {"name": "address", "in": "path", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
-"ChainId": {"name": "chainId", "in": "query", "required": false, "schema": {"type": "integer", "default": 1, "enum": [1]}},
+"ChainId": {"name": "chainId", "in": "query", "required": false, "schema": {"type": "integer", "default": 1}},
 "ProofId": {"name": "proofId", "in": "path", "required": true, "schema": {"type": "string"}}
 },
 "responses": {
