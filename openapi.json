@@ -1,20 +1,41 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {
   "openapi": "3.0.3",
   "info": {
     "title": "x402 API Portfolio",
     "version": "1.0.0",
-    "description": "Five machine-native REST services protected by x402 payments on Ethereum USDC. Every operation below is paid and returns HTTP 402 with x402 payment requirements before a successful paid retry."
+    "description": "Five machine-native REST services protected by x402 payments on Base USDC. Every operation below is paid at a flat rate and returns HTTP 402 with x402 payment requirements before a successful paid retry."
   },
   "servers": [
     {
-      "url": "https://x402-api-91r3.vercel.app",
+      "url": "https://vercel.app",
       "description": "Production"
     }
   ],
   "x-x402": {
     "version": "1.0.0",
     "payment": {
-      "network": "ethereum",
+      "network": "base",
       "asset": "USDC",
       "payTo": "0x99F3A41619Ae88B4Fd9f8f2797A1Aea152C0d271"
     }
@@ -29,13 +50,13 @@
       "get": {
         "operationId": "alphaRouteQuote",
         "summary": "Get an optimal execution route",
-        "description": "Price: $0.015 for standard quotes; $0.12 when amountIn is greater than 10,000.",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "parameters": [
           {"name": "tokenIn", "in": "query", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
           {"name": "tokenOut", "in": "query", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
           {"name": "amountIn", "in": "query", "required": true, "schema": {"type": "string", "description": "Amount in token base units"}},
           {"name": "maxSlippageBps", "in": "query", "required": false, "schema": {"type": "integer", "default": 50, "minimum": 0}},
-          {"name": "chainId", "in": "query", "required": true, "schema": {"type": "integer", "enum": [1]}}
+          {"name": "chainId", "in": "query", "required": true, "schema": {"type": "integer", "default": 8453}}
         ],
         "responses": {
           "200": {"$ref": "#/components/responses/AlphaQuote"},
@@ -47,6 +68,7 @@
       "post": {
         "operationId": "alphaRouteExecute",
         "summary": "Execute a quoted route",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -65,6 +87,7 @@
       "get": {
         "operationId": "alphaRouteStatus",
         "summary": "Get route execution status",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "parameters": [{"$ref": "#/components/parameters/RouteId"}],
         "responses": {
           "200": {"$ref": "#/components/responses/RouteStatus"},
@@ -76,6 +99,7 @@
       "get": {
         "operationId": "sentinelFeedEvents",
         "summary": "Fetch structured events",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "parameters": [
           {"name": "topic", "in": "query", "required": true, "schema": {"type": "string", "example": "token_launch"}},
           {"name": "since", "in": "query", "required": false, "schema": {"type": "string", "format": "date-time"}},
@@ -91,6 +115,7 @@
       "get": {
         "operationId": "sentinelFeedMentions",
         "summary": "Fetch entity mentions",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "parameters": [
           {"$ref": "#/components/parameters/EntityId"},
           {"name": "window", "in": "query", "required": false, "schema": {"type": "string", "default": "15m"}}
@@ -104,8 +129,8 @@
     "/sentinelfeed/api/v1/stream/subscribe": {
       "post": {
         "operationId": "sentinelFeedSubscribe",
-        "summary": "Open a prepaid event stream",
-        "description": "Charges a $5.00 prepaid balance for the metered stream stub.",
+        "summary": "Open an event stream",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "responses": {
           "202": {"$ref": "#/components/responses/SubscriptionResponse"},
           "402": {"$ref": "#/components/responses/PaymentRequired"}
@@ -116,6 +141,7 @@
       "get": {
         "operationId": "complyRailWalletScreen",
         "summary": "Screen a wallet",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "parameters": [
           {"$ref": "#/components/parameters/Address"},
           {"$ref": "#/components/parameters/ChainId"}
@@ -130,6 +156,7 @@
       "get": {
         "operationId": "complyRailTransactionScreen",
         "summary": "Screen a transaction and create an attestation",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "parameters": [
           {"name": "from", "in": "query", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
           {"name": "to", "in": "query", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
@@ -146,6 +173,7 @@
       "post": {
         "operationId": "complyRailBatchAttest",
         "summary": "Create batch wallet attestations",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -164,6 +192,7 @@
       "post": {
         "operationId": "distillForgeClassify",
         "summary": "Classify text with a narrow model",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -182,6 +211,7 @@
       "post": {
         "operationId": "distillForgeExtract",
         "summary": "Extract structured data from a document",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -200,6 +230,7 @@
       "post": {
         "operationId": "distillForgeReason",
         "summary": "Run narrow-domain reasoning",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -218,6 +249,7 @@
       "get": {
         "operationId": "distillForgeModels",
         "summary": "List available models",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "responses": {
           "200": {"$ref": "#/components/responses/ModelsResponse"},
           "402": {"$ref": "#/components/responses/PaymentRequired"}
@@ -228,6 +260,7 @@
       "post": {
         "operationId": "proofMeshZkProof",
         "summary": "Submit a zkML proof job",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -246,35 +279,39 @@
       "post": {
         "operationId": "proofMeshTeeAttest",
         "summary": "Verify a TEE computation attestation",
+        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "schema": {"$ref": "#/components/schemas/TeeAttestRequest"}
-            }
-          }
-        },
-        "responses": {
-          "200": {"$ref": "#/components/responses/TeeResponse"},
-          "402": {"$ref": "#/components/responses/PaymentRequired"}
-        }
-      }
-    },
-    "/proofmesh/api/v1/verify/status/{proofId}": {
-      "get": {
-        "operationId": "proofMeshStatus",
-        "summary": "Poll a proof job",
-        "parameters": [{"$ref": "#/components/parameters/ProofId"}],
-        "responses": {
-          "200": {"$ref": "#/components/responses/ProofStatusResponse"},
-          "402": {"$ref": "#/components/responses/PaymentRequired"}
-        }
-      }
-    },
-    "/api/scraped-data": {
-      "get": {
-        "operationId": "scrapeData",
+
+"application/json": {
+"schema": {"$ref": "#/components/schemas/TeeAttestRequest"}
+}
+}
+},
+"responses": {
+"200": {"$ref": "#/components/responses/TeeResponse"},
+"402": {"$ref": "#/components/responses/PaymentRequired"}
+}
+}
+},
+"/proofmesh/api/v1/verify/status/{proofId}": {
+"get": {
+"operationId": "proofMeshStatus",
+"summary": "Poll a proof job",
+"description": "Price: Uniform flat fee of $0.01 USDC.",
+"parameters": [{"$ref": "#/components/parameters/ProofId"}],
+"responses": {
+"200": {"$ref": "#/components/responses/ProofStatusResponse"},
+"402": {"$ref": "#/components/responses/PaymentRequired"}
+}
+}
+},
+"/api/scraped-data": {
+"get": {
+"operationId": "scrapeData",
 "summary": "Scrape a target URL",
+"description": "Price: Uniform flat fee of $0.01 USDC.",
 "parameters": [
 {
 "name": "target",
@@ -313,7 +350,7 @@
 "RouteId": {"name": "routeId", "in": "path", "required": true, "schema": {"type": "string"}},
 "EntityId": {"name": "entityId", "in": "path", "required": true, "schema": {"type": "string"}},
 "Address": {"name": "address", "in": "path", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
-"ChainId": {"name": "chainId", "in": "query", "required": false, "schema": {"type": "integer", "default": 1, "enum": [1]}},
+"ChainId": {"name": "chainId", "in": "query", "required": false, "schema": {"type": "integer", "default": 8453}},
 "ProofId": {"name": "proofId", "in": "path", "required": true, "schema": {"type": "string"}}
 },
 "responses": {
@@ -388,13 +425,11 @@
 "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ScrapeResult"}}}
 }
 },
-
-
 "schemas": {
 "EvmAddress": {"type": "string", "pattern": "^0x[a-fA-F0-9]{40}$", "example": "0x0000000000000000000000000000000000000001"},
 "PaymentChallenge": {"type": "object", "required": ["x402Version", "accepts"], "properties": {"x402Version": {"type": "integer", "example": 1}, "accepts": {"type": "array", "items": {"$ref": "#/components/schemas/PaymentRequirement"}}}},
-"PaymentRequirement": {"type": "object", "required": ["scheme", "network", "asset", "payTo", "maxAmountRequired", "resource"], "properties": {"scheme": {"type": "string", "example": "exact"}, "network": {"type": "string", "example": "ethereum"}, "asset": {"type": "string", "example": "USDC"}, "payTo": {"$ref": "#/components/schemas/EvmAddress"}, "maxAmountRequired": {"type": "string", "description": "USDC atomic units with 6 decimals"}, "resource": {"type": "string"}, "description": {"type": "string"}}},
-"AlphaQuote": {"type": "object", "required": ["routeId", "chainId", "tokenIn", "tokenOut", "amountIn", "expectedOut", "priceImpactBps", "maxSlippageBps", "selectedVenues", "routeType", "calldata", "quoteFingerprint", "expiresAt"], "properties": {"routeId": {"type": "string"}, "chainId": {"type": "integer", "example": 1}, "tokenIn": {"$ref": "#/components/schemas/EvmAddress"}, "tokenOut": {"$ref": "#/components/schemas/EvmAddress"}, "amountIn": {"type": "string"}, "expectedOut": {"type": "string"}, "priceImpactBps": {"type": "integer"}, "maxSlippageBps": {"type": "integer"}, "selectedVenues": {"type": "array", "items": {"type": "string"}}, "routeType": {"type": "string", "enum": ["single-hop", "multi-hop-split"]}, "calldata": {"type": "string"}, "quoteFingerprint": {"type": "string"}, "expiresAt": {"type": "string", "format": "date-time"}}},
+"PaymentRequirement": {"type": "object", "required": ["scheme", "network", "asset", "payTo", "maxAmountRequired", "resource"], "properties": {"scheme": {"type": "string", "example": "exact"}, "network": {"type": "string", "example": "base"}, "asset": {"type": "string", "example": "USDC"}, "payTo": {"$ref": "#/components/schemas/EvmAddress"}, "maxAmountRequired": {"type": "string", "description": "USDC atomic units with 6 decimals"}, "resource": {"type": "string"}, "description": {"type": "string"}}},
+"AlphaQuote": {"type": "object", "required": ["routeId", "chainId", "tokenIn", "tokenOut", "amountIn", "expectedOut", "priceImpactBps", "maxSlippageBps", "selectedVenues", "routeType", "calldata", "quoteFingerprint", "expiresAt"], "properties": {"routeId": {"type": "string"}, "chainId": {"type": "integer", "example": 8453}, "tokenIn": {"$ref": "#/components/schemas/EvmAddress"}, "tokenOut": {"$ref": "#/components/schemas/EvmAddress"}, "amountIn": {"type": "string"}, "expectedOut": {"type": "string"}, "priceImpactBps": {"type": "integer"}, "maxSlippageBps": {"type": "integer"}, "selectedVenues": {"type": "array", "items": {"type": "string"}}, "routeType": {"type": "string", "enum": ["single-hop", "multi-hop-split"]}, "calldata": {"type": "string"}, "quoteFingerprint": {"type": "string"}, "expiresAt": {"type": "string", "format": "date-time"}}},
 "ExecuteRequest": {"type": "object", "required": ["routeId", "signedPermit", "maxSlippageBps"], "properties": {"routeId": {"type": "string"}, "signedPermit": {"type": "string"}, "maxSlippageBps": {"type": "integer"}, "notionalUsd": {"type": "number"}}},
 "TransactionScreen": {"type": "object", "required": ["from", "to", "amount", "asset", "riskScore", "sanctioned", "decision", "attestation"], "properties": {"from": {"$ref": "#/components/schemas/EvmAddress"}, "to": {"$ref": "#/components/schemas/EvmAddress"}, "amount": {"type": "string"}, "asset": {"type": "string"}, "riskScore": {"type": "number", "minimum": 0, "maximum": 1}, "sanctioned": {"type": "boolean"}, "decision": {"type": "string", "enum": ["allow", "review", "block"]}, "attestation": {"type": "object", "additionalProperties": true}, "settlementTxHash": {"type": "string", "nullable": true}}},
 "BatchAttestRequest": {"type": "object", "required": ["addresses"], "properties": {"addresses": {"type": "array", "items": {"$ref": "#/components/schemas/EvmAddress"}}}},
@@ -404,7 +439,7 @@
 "ExtractResult": {"allOf": [{"$ref": "#/components/schemas/Inference"}, {"type": "object", "properties": {"refundTxHash": {"type": "string", "nullable": true}}}]},
 "ZkProofRequest": {"type": "object", "required": ["modelHash", "inputHash", "outputHash", "proofSystem"], "properties": {"modelHash": {"type": "string"}, "inputHash": {"type": "string"}, "outputHash": {"type": "string"}, "proofSystem": {"type": "string", "enum": ["ezkl", "risczero"]}}},
 "TeeAttestRequest": {"type": "object", "required": ["enclaveId", "computationDigest"], "properties": {"enclaveId": {"type": "string"}, "computationDigest": {"type": "string"}}},
-"ProofStatus": {"type": "object", "required": ["proofId", "status", "proofSystem", "progressPercent", "resultFingerprint"], "properties": {"proofId": {"type": "string"}, "status": {"type": "string", "enum": ["queued", "proving", "complete", "failed"]}, "proof": {"type": "string", "nullable": true}, "proofSystem": {"type": "string", "enum": ["ezkl", "risczero"]}, "progressPercent": {"type": "integer", "minimum": 0, "maximum": 100}, "resultFingerprint": {"type": "string"}}},
+"ProofStatus": {"type": "object", "required": ["proofId", "status", "proofSystem", "progressPercent", "resultFingerprint"], "properties": {"proofId": {"type": "string"}, "status": {"type": "string", "enum": ["queued", "proving", "complete", "failed"]}, "proof": {"type": "string", "nullable": true}, "proofSystem": {"type": "string", "enum": ["ezkl", "risczero"]}, "progressPercent": {"type": "integer", "minimum": 0, "maximum": 100}, "resultFingerprint": {"type": "string"}},
 "ScrapeResult": {"type": "object", "properties": {"success": {"type": "boolean"}, "data": {"type": "object", "additionalProperties": true}}}
 }
 }
