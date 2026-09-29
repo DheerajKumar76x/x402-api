@@ -3,7 +3,7 @@
   "info": {
     "title": "x402 API Portfolio",
     "version": "1.0.0",
-    "description": "Five machine-native REST services protected by x402 payments on Base USDC. Every operation below is paid at a flat rate and returns HTTP 402 with x402 payment requirements before a successful paid retry."
+    "description": "Five machine-native REST services protected by x402 payments on Base USDC. Every operation below is paid and returns HTTP 402 with x402 payment requirements before a successful paid retry."
   },
   "servers": [
     {
@@ -29,7 +29,7 @@
       "get": {
         "operationId": "alphaRouteQuote",
         "summary": "Get an optimal execution route",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
+        "description": "Price: $0.015 for standard quotes; $0.12 when amountIn is greater than 10,000.",
         "parameters": [
           {"name": "tokenIn", "in": "query", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
           {"name": "tokenOut", "in": "query", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
@@ -47,7 +47,6 @@
       "post": {
         "operationId": "alphaRouteExecute",
         "summary": "Execute a quoted route",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -66,7 +65,6 @@
       "get": {
         "operationId": "alphaRouteStatus",
         "summary": "Get route execution status",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "parameters": [{"$ref": "#/components/parameters/RouteId"}],
         "responses": {
           "200": {"$ref": "#/components/responses/RouteStatus"},
@@ -78,7 +76,6 @@
       "get": {
         "operationId": "sentinelFeedEvents",
         "summary": "Fetch structured events",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "parameters": [
           {"name": "topic", "in": "query", "required": true, "schema": {"type": "string", "example": "token_launch"}},
           {"name": "since", "in": "query", "required": false, "schema": {"type": "string", "format": "date-time"}},
@@ -94,7 +91,6 @@
       "get": {
         "operationId": "sentinelFeedMentions",
         "summary": "Fetch entity mentions",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "parameters": [
           {"$ref": "#/components/parameters/EntityId"},
           {"name": "window", "in": "query", "required": false, "schema": {"type": "string", "default": "15m"}}
@@ -108,8 +104,8 @@
     "/sentinelfeed/api/v1/stream/subscribe": {
       "post": {
         "operationId": "sentinelFeedSubscribe",
-        "summary": "Open an event stream",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
+        "summary": "Open a prepaid event stream",
+        "description": "Charges a $5.00 prepaid balance for the metered stream stub.",
         "responses": {
           "202": {"$ref": "#/components/responses/SubscriptionResponse"},
           "402": {"$ref": "#/components/responses/PaymentRequired"}
@@ -120,7 +116,6 @@
       "get": {
         "operationId": "complyRailWalletScreen",
         "summary": "Screen a wallet",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "parameters": [
           {"$ref": "#/components/parameters/Address"},
           {"$ref": "#/components/parameters/ChainId"}
@@ -135,7 +130,6 @@
       "get": {
         "operationId": "complyRailTransactionScreen",
         "summary": "Screen a transaction and create an attestation",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "parameters": [
           {"name": "from", "in": "query", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
           {"name": "to", "in": "query", "required": true, "schema": {"$ref": "#/components/schemas/EvmAddress"}},
@@ -152,7 +146,6 @@
       "post": {
         "operationId": "complyRailBatchAttest",
         "summary": "Create batch wallet attestations",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -171,7 +164,6 @@
       "post": {
         "operationId": "distillForgeClassify",
         "summary": "Classify text with a narrow model",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -190,7 +182,6 @@
       "post": {
         "operationId": "distillForgeExtract",
         "summary": "Extract structured data from a document",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -209,7 +200,6 @@
       "post": {
         "operationId": "distillForgeReason",
         "summary": "Run narrow-domain reasoning",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -228,7 +218,6 @@
       "get": {
         "operationId": "distillForgeModels",
         "summary": "List available models",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "responses": {
           "200": {"$ref": "#/components/responses/ModelsResponse"},
           "402": {"$ref": "#/components/responses/PaymentRequired"}
@@ -239,7 +228,6 @@
       "post": {
         "operationId": "proofMeshZkProof",
         "summary": "Submit a zkML proof job",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
@@ -258,38 +246,35 @@
       "post": {
         "operationId": "proofMeshTeeAttest",
         "summary": "Verify a TEE computation attestation",
-        "description": "Price: Uniform flat fee of $0.01 USDC.",
         "requestBody": {
           "required": true,
           "content": {
-"application/json": {
-"schema": {"$ref": "#/components/schemas/TeeAttestRequest"}
-}
-}
-},
-"responses": {
-"200": {"$ref": "#/components/responses/TeeResponse"},
-"402": {"$ref": "#/components/responses/PaymentRequired"}
-}
-}
-},
-"/proofmesh/api/v1/verify/status/{proofId}": {
-"get": {
-"operationId": "proofMeshStatus",
-"summary": "Poll a proof job",
-"description": "Price: Uniform flat fee of $0.01 USDC.",
-"parameters": [{"$ref": "#/components/parameters/ProofId"}],
-"responses": {
-"200": {"$ref": "#/components/responses/ProofStatusResponse"},
-"402": {"$ref": "#/components/responses/PaymentRequired"}
-}
-}
-},
-"/api/scraped-data": {
-"get": {
-"operationId": "scrapeData",
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/TeeAttestRequest"}
+            }
+          }
+        },
+        "responses": {
+          "200": {"$ref": "#/components/responses/TeeResponse"},
+          "402": {"$ref": "#/components/responses/PaymentRequired"}
+        }
+      }
+    },
+    "/proofmesh/api/v1/verify/status/{proofId}": {
+      "get": {
+        "operationId": "proofMeshStatus",
+        "summary": "Poll a proof job",
+        "parameters": [{"$ref": "#/components/parameters/ProofId"}],
+        "responses": {
+          "200": {"$ref": "#/components/responses/ProofStatusResponse"},
+          "402": {"$ref": "#/components/responses/PaymentRequired"}
+        }
+      }
+    },
+    "/api/scraped-data": {
+      "get": {
+        "operationId": "scrapeData",
 "summary": "Scrape a target URL",
-"description": "Price: Uniform flat fee of $0.01 USDC.",
 "parameters": [
 {
 "name": "target",
