@@ -2,6 +2,8 @@
   "serverInfo": {
     "name": "x402-api",
     "version": "1.0.0"
+
+    
   },
   "tools": [
     {
@@ -24,3 +26,5 @@
   "resources": [],
   "prompts": []
 }
+
+
