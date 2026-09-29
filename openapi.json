@@ -401,7 +401,16 @@
 "TransactionScreen": {"type": "object", "required": ["from", "to", "amount", "asset", "riskScore", "sanctioned", "decision", "attestation"], "properties": {"from": {"$ref": "#/components/schemas/EvmAddress"}, "to": {"$ref": "#/components/schemas/EvmAddress"}, "amount": {"type": "string"}, "asset": {"type": "string"}, "riskScore": {"type": "number", "minimum": 0, "maximum": 1}, "sanctioned": {"type": "boolean"}, "decision": {"type": "string", "enum": ["allow", "review", "block"]}, "attestation": {"type": "object", "additionalProperties": true}, "settlementTxHash": {"type": "string", "nullable": true}}},
 "BatchAttestRequest": {"type": "object", "required": ["addresses"], "properties": {"addresses": {"type": "array", "items": {"$ref": "#/components/schemas/EvmAddress"}}}},
 "ClassifyRequest": {"type": "object", "required": ["text", "taxonomy"], "properties": {"text": {"type": "string"}, "taxonomy": {"type": "string", "example": "onchain_events_v3"}, "maxTokens": {"type": "integer"}}},
-"ExtractRequest": {"type": "object", "required": ["document", "schema"], "properties": {"document": {"type": "string"}, "schema": {"type": "object"}, "maxTokensCeiling": {"type": "integer", "default": 2000}}},
+"ExtractResult": {
+  "type": "object",
+  "properties": {
+    "model": {"type": "string"},
+    "result": {"type": "object", "additionalProperties": true},
+    "tokensUsed": {"type": "integer"},
+    "billedAmountUsdc": {"type": "string"},
+    "refundTxHash": {"type": "string", "nullable": true}
+  }
+},
 "Inference": {"type": "object", "properties": {"model": {"type": "string"}, "result": {"type": "object", "additionalProperties": true}, "tokensUsed": {"type": "integer"}, "billedAmountUsdc": {"type": "string"}}},
 "ExtractResult": {
   "type": "object",
